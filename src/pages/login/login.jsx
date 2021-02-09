@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
 import { Form, Icon, Input, Button, message } from 'antd'
+import { Redirect } from 'react-router-dom'
 import './login.less'
 import logo from '../../assets/images/logo.png'
+import { reqLogin } from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 
-const Item = Form.Item
+// const Item = Form.Item
 
 // 登录的路由组件
 class Login extends Component {
@@ -14,9 +18,24 @@ class Login extends Component {
     event.preventDefault()
 
     // 对所有表单字段进行检验
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
-        console.log(values)
+        const { username, password } = values
+        const result = await reqLogin(username, password)
+        if (result.status === 0) { // 登录成功
+          message.success('登录成功')
+          // 保存user
+          const user = result.data
+          // 保存在内存中
+          memoryUtils.user = user
+          // 保存到local中
+          storageUtils.saveUser(user)
+
+          // 跳转到管理界面 (不需要再回退回到登陆)
+          this.props.history.replace('/')
+        } else { // 登录失败
+          message.error(result.msg)
+        }
       } else {
         console.log(err)
       }
@@ -45,6 +64,13 @@ class Login extends Component {
 
 
   render () {
+
+    // 如果用户已经登陆, 自动跳转到管理界面
+    const user = memoryUtils.user
+    if (user && user._id) {
+      return <Redirect to="/"></Redirect>
+    }
+
     // 得到具强大功能的form对象
     const form = this.props.form
     const { getFieldDecorator } = form
@@ -68,7 +94,7 @@ class Login extends Component {
                     { max: 12, message: '用户名至少是12位'},
                     { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名必须是英文、数字或下划线组成'}
                   ],
-                  initialValue: 'admin', // 初始值
+                  // initialValue: 'admin', // 初始值
                 })(
                   <Input
                     prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
@@ -132,3 +158,15 @@ class Login extends Component {
  */
 const WrapLogin = Form.create()(Login)
 export default WrapLogin
+
+
+/*
+async和await
+1. 作用?
+   简化promise对象的使用: 不用再使用then()来指定成功/失败的回调函数
+   以同步编码(没有回调函数了)方式实现异步流程
+2. 哪里写await?
+    在返回promise的表达式左侧写await: 不想要promise, 想要promise异步执行的成功的value数据
+3. 哪里写async?
+    await所在函数(最近的)定义的左侧写async
+ */
