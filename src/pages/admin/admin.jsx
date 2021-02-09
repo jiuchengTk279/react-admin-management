@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
-
+import { Layout } from 'antd'
 import memoryUtils from '../../utils/memoryUtils'
+import MHeader from '../../components/header'
+import LeftNav from '../../components/leftNav'
+
+const { Header, Footer, Sider, Content } = Layout
 
 // 后台管理的路由组件
 export default class Admin extends Component {
@@ -15,7 +19,16 @@ export default class Admin extends Component {
     }
 
     return (
-      <div>Admin</div>
+      <Layout style={{height: '100%'}}>
+        <Sider>
+          <LeftNav></LeftNav>
+        </Sider>
+        <Layout>
+          <MHeader>Header</MHeader>
+          <Content style={{margin: 20, backgroundColor: '#fff'}}>Content</Content>
+          <Footer style={{textAlign: 'center', color: '#cccccc'}}>推荐使用谷歌浏览器，可以获得更佳页面操作体验</Footer>
+        </Layout>
+      </Layout>
     )
   }
 }
