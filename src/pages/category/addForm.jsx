@@ -1,25 +1,38 @@
 import React, { Component } from 'react'
 import { Form, Select, Input } from 'antd'
+import PropTypes from 'prop-types'
 
 const Item = Form.Item
 const Option = Select.Option
 
 // 添加分类的form组件
 class AddForm extends Component {
-  
+
+  static propTypes = {
+    setForm: PropTypes.func.isRequired, // 用来传递form对象的函数
+    categories: PropTypes.array.isRequired, // 一级分类的数组
+    parentId: PropTypes.string.isRequired, // 父分类的ID
+  }
+
+  componentWillMount () {
+    this.props.setForm(this.props.form)
+  }
+
   render () {
+    const { categories, parentId } = this.props
     const { getFieldDecorator } = this.props.form
     return (
       <Form>
         <Item>
           {
             getFieldDecorator('parentId', {
-              initialValue: '0'
+              initialValue: parentId
             })(
               <Select>
                 <Option value="0">一级分类</Option>
-                <Option value="1">电脑</Option>
-                <Option value="2">图书</Option>
+                {
+                  categories.map(c => <Option value={c._id}>{c.name}</Option>)
+                }
               </Select>
             )
           }
