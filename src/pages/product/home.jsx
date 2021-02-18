@@ -41,7 +41,7 @@ export default class ProductHome extends Component {
           const newStatus = status === 1 ? 2 : 1
           return (
             <span>
-              <Button type="primary" onClick={() => updateStatus(_id, newStatus)}>{status === 1 ? '下架' : '上架'}</Button>
+              <Button type="primary" onClick={() => this.updateStatus(_id, newStatus)}>{status === 1 ? '下架' : '上架'}</Button>
               <span>{status === 1 ? '在售' : '已下架'}</span>
             </span>
           )

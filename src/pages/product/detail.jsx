@@ -12,7 +12,7 @@ export default class ProductDetail extends Component {
     cName2: '' // 二级分类名称
   }
   
-  componentDidMount () {
+  async componentDidMount () {
     // 得到当前商品的分类ID
     const { pCategoryId, categoryId } = this.props.location.state.product
     if (pCategoryId === '0') { // 一级分类下的商品
