@@ -26,6 +26,17 @@ export const reqAddCategories = ({parentId, categoryName}) => ajax(BASE + '/mana
 // 更新分类
 export const reqUpdateCategories = ({categoryId, categoryName}) => ajax(BASE + '/manage/category/update', {categoryId, categoryName}, 'POST')
 
+// 获取商品分页列表
+export const reqProducts = ({pageNum, pageSize}) => ajax(BASE + '/manage/product/list', { pageNum, pageSize})
+
+// 搜索商品分页列表 (根据商品名称/商品描述)
+// searchType: 搜索的类型, productName/productDesc
+export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType}) => ajax(BASE + '/manage/product/search', {
+  pageNum,
+  pageSize,
+  [searchType]: searchName
+})
+
 // jsonp 请求的接口请求函数
 export const reqWeather = (city) => {
 
