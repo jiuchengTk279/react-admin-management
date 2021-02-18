@@ -26,6 +26,9 @@ export const reqAddCategories = ({parentId, categoryName}) => ajax(BASE + '/mana
 // 更新分类
 export const reqUpdateCategories = ({categoryId, categoryName}) => ajax(BASE + '/manage/category/update', {categoryId, categoryName}, 'POST')
 
+// 获取一个分类
+export const reqCategory = (categoryId) => ajax(BASE + '/manage/category/info', { categoryId })
+
 // 获取商品分页列表
 export const reqProducts = ({pageNum, pageSize}) => ajax(BASE + '/manage/product/list', { pageNum, pageSize})
 
