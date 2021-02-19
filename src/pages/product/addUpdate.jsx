@@ -3,6 +3,7 @@ import { Card, Icon, Form, Input, Cascader, Button, message } from 'antd'
 import LinkButton from '../../components/linkButton'
 import { reqCategories } from '../../api'
 import PicturesWall from './picturesWall'
+import RichTextEditor from './richTextEditor'
 
 const {Item} = Form
 const { TextArea } = Input
@@ -75,6 +76,7 @@ class ProductAddUpdate extends Component {
         console.log('发送ajax请求')
 
         const imgs = this.pw.current.getImgs()
+        const detail = this.editor.current.getDetail()
       }
     })
   }
@@ -136,7 +138,7 @@ class ProductAddUpdate extends Component {
   render () {
 
     const { isUpdate, product } = this
-    const { pCategoryId, categoryId, imgs } = product
+    const { pCategoryId, categoryId, imgs, detail } = product
     // 用来接收级联分类ID的数组
     const categoryIds = []
     if (isUpdate) {
@@ -213,8 +215,8 @@ class ProductAddUpdate extends Component {
           <Item label="商品图片">
             <PicturesWall ref={this.pw} imgs={imgs}></PicturesWall>
           </Item>
-          <Item label="商品详情">
-            <div>商品详情</div>
+          <Item label="商品详情" labelCol={{span: 2}} wrapperCol={{span: 20}}>
+            <RichTextEditor ref={this.editor} detail={detail}></RichTextEditor>
           </Item>
           <Item>
             <Button type="primary" onClick={this.submit}>提交</Button>
