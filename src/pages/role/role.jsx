@@ -1,59 +1,13 @@
 import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
 import { PAGE_SIZE } from '../../utils/constants'
+import { reqRoles } from '../../api'
 
 export default class Role extends Component {
 
   state = {
-    roles: [
-      {
-        "menus": [
-            "/role",
-            "/charts/bar",
-            "/home",
-            "/category"
-        ],
-        "_id": "5ca9eaa1b49ef916541160d3",
-        "name": "测试",
-        "create_time": 1554639521749,
-        "__v": 0,
-        "auth_time": 1558679920395,
-        "auth_name": "test007"
-    },
-    {
-        "menus": [
-            "/role",
-            "/charts/bar",
-            "/home",
-            "/charts/line",
-            "/category",
-            "/product",
-            "/products"
-        ],
-        "_id": "5ca9eab0b49ef916541160d4",
-        "name": "经理",
-        "create_time": 1554639536419,
-        "__v": 0,
-        "auth_time": 1558506990798,
-        "auth_name": "test008"
-    },
-    {
-        "menus": [
-            "/home",
-            "/products",
-            "/category",
-            "/product",
-            "/role"
-        ],
-        "_id": "5ca9eac0b49ef916541160d5",
-        "name": "角色1",
-        "create_time": 1554639552758,
-        "__v": 0,
-        "auth_time": 1557630307021,
-        "auth_name": "admin"
-    }
-    ],
-    role: []
+    roles: [], // 所有角色的列表
+    role: {} // 选中的role
   }
   
   initColumn = () => {
@@ -77,6 +31,14 @@ export default class Role extends Component {
     ]
   }
 
+  getRoles = async () => {
+    const result = await reqRoles()
+    if (result.status === 0) {
+      const roles = result.data
+      this.setState({ roles })
+    }
+  }
+
   onRow = (role) => {
     return {
       onClick: event => {
@@ -89,14 +51,17 @@ export default class Role extends Component {
     this.initColumn()
   }
 
+  componentDidMount () {
+    this.getRoles()
+  }
 
   render () {
-    const { roles } = this.state
+    const { roles, role } = this.state
 
     const title = (
       <span>
         <Button type="primary">创建角色</Button> &nbsp;&nbsp;
-        <Button type="primary" disabled>设置角色权限</Button>
+        <Button type="primary" disabled={!role._id}>设置角色权限</Button>
       </span>
     )
 
@@ -108,7 +73,7 @@ export default class Role extends Component {
           dataSource={roles}
           columns={this.columns}
           pagination={{defaultPageSize: PAGE_SIZE}}
-          rowSelection={{type: 'radio'}}
+          rowSelection={{type: 'radio', selectedRowKeys: [role._id] }}
           onRow={this.onRow}
         ></Table>
       </Card>
