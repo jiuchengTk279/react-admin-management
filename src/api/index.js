@@ -43,6 +43,11 @@ export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType}) 
   [searchType]: searchName
 })
 
+// 删除指定名称的图片
+export const reqDeleteImg = (name) => ajax(BASE + '/manage/img/delete', {name}, 'POST')
+
+
+
 // jsonp 请求的接口请求函数
 export const reqWeather = (city) => {
 
