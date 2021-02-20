@@ -58,6 +58,10 @@ export const reqAddRole = (roleName) => ajax(BASE + '/manage/role/add', {roleNam
 // 更新角色
 export const reqUpdateRole = (role) => ajax(BASE + '/manage/role/update', role, 'POST')
 
+// 获取所有的用户列表
+export const reqUsers = () => ajax(BASE + '/manage/user/list')
+
+
 // jsonp 请求的接口请求函数
 export const reqWeather = (city) => {
 
