@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
 import LinkButton from '../../components/linkButton/index'
 import { formateDate } from '../../utils/dateUtils'
-import { reqUsers } from '../../api'
+import { reqUsers, reqDeleteUser } from '../../api'
 import { PAGE_SIZE } from '../../utils/constants'
 
 export default class User extends Component {
@@ -43,7 +43,7 @@ export default class User extends Component {
         render: (user) => (
           <span>
             <LinkButton>修改</LinkButton>
-            <LinkButton>删除</LinkButton>
+            <LinkButton onClick={() => this.deleteUser(user)}>删除</LinkButton>
           </span>
         )
       }
@@ -64,6 +64,24 @@ export default class User extends Component {
   addUpdateUser = () => {
     
   }
+
+  // 删除指定用户
+  deleteUser = (user) => {
+    Modal.confirm({
+      title: `确认删除${user.username}吗？`,
+      onOk: async () => {
+        const result = await reqDeleteUser(user._id)
+        if (result.status === 0) {
+          message.success('删除用户成功！')
+          this.getUsers()
+        }
+      },
+      onCancel: () => {
+        message.info('已取消删除用户')
+      }
+    })
+  }
+
 
   // 获取所有的用户列表
   getUsers = async () => {
