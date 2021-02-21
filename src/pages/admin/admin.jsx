@@ -12,6 +12,7 @@ import User from '../user/user'
 import Bar from '../charts/bar'
 import Line from '../charts/line'
 import Pie from '../charts/pie'
+import NotFound from '../notFound/notFound'
 
 const { Footer, Sider, Content } = Layout
 
@@ -35,6 +36,7 @@ export default class Admin extends Component {
           <MHeader>Header</MHeader>
           <Content style={{margin: 20, backgroundColor: '#fff'}}>
             <Switch>
+              <Redirect from="/" exact to="/home"></Redirect>
               <Route path="/home" component={Home}></Route>
               <Route path="/category" component={Category}></Route>
               <Route path="/product" component={Product}></Route>
@@ -43,7 +45,7 @@ export default class Admin extends Component {
               <Route path="/charts/bar" component={Bar}></Route>
               <Route path="/charts/line" component={Line}></Route>
               <Route path="/charts/pie" component={Pie}></Route>
-              <Redirect to="/home"></Redirect>
+              <Route component={NotFound}></Route>
             </Switch>
           </Content>
           <Footer style={{textAlign: 'center', color: '#cccccc'}}>推荐使用谷歌浏览器，可以获得更佳页面操作体验</Footer>
