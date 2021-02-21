@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
 import LinkButton from '../../components/linkButton/index'
 import { formateDate } from '../../utils/dateUtils'
-import { reqUsers, reqDeleteUser } from '../../api'
+import { reqUsers, reqDeleteUser, reqAddUser } from '../../api'
 import { PAGE_SIZE } from '../../utils/constants'
+import UserForm from './userForm'
 
 export default class User extends Component {
   
@@ -61,8 +62,22 @@ export default class User extends Component {
   }
 
   // 添加/更新用户
-  addUpdateUser = () => {
-    
+  addUpdateUser = async () => {
+    this.setState({ isShow: false })
+
+    // 1. 收集输入数据
+    const user = this.form.getFieldsValue()
+    this.form.resetFields()
+
+    // 2. 提交添加的请求
+    const result = await reqAddUser(user)
+    // 3. 更新列表显示
+    if (result.status === 0) {
+      message.success('添加用户成功！')
+      this.getUsers()
+    } else {
+      message.error('添加用户失败！')
+    }
   }
 
   // 删除指定用户
@@ -105,8 +120,8 @@ export default class User extends Component {
 
   render () {
 
-    const { users, isShow  } = this.state
-    const title = <Button type="primary">创建用户</Button>
+    const { users, isShow, roles  } = this.state
+    const title = <Button type="primary" onClick={() => this.setState({ isShow: true})}>创建用户</Button>
 
     return (
       <Card title={title}>
@@ -124,7 +139,7 @@ export default class User extends Component {
           onOk={this.addUpdateUser}
           onCancel={() => this.setState({ isShow: false})}
         >
-          <div>添加/更新界面</div>
+          <UserForm setForm={form => this.form = form} roles={roles}></UserForm>
         </Modal>
       </Card>
     )
