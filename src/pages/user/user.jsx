@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Card, Button, Table, Modal, message } from 'antd'
 import LinkButton from '../../components/linkButton/index'
 import { formateDate } from '../../utils/dateUtils'
-import { reqUsers, reqDeleteUser, reqAddUser } from '../../api'
+import { reqUsers, reqDeleteUser, reqAddOrUpdateUser } from '../../api'
 import { PAGE_SIZE } from '../../utils/constants'
 import UserForm from './userForm'
 
@@ -43,7 +43,7 @@ export default class User extends Component {
         title: '操作',
         render: (user) => (
           <span>
-            <LinkButton>修改</LinkButton>
+            <LinkButton onClick={() => this.showUpdate(user)}>修改</LinkButton>
             <LinkButton onClick={() => this.deleteUser(user)}>删除</LinkButton>
           </span>
         )
@@ -61,6 +61,20 @@ export default class User extends Component {
     this.roleNames = roleNames
   }
 
+  // 显示修改界面
+  showUpdate = (user) => {
+    // 保存 user
+    this.user = user
+    this.setState({ isShow: true })
+  } 
+
+  // 显示添加界面
+  showAdd = () => {
+    // 去除前面保存的user
+    this.user = null
+    this.setState({ isShow: true })
+  }
+
   // 添加/更新用户
   addUpdateUser = async () => {
     this.setState({ isShow: false })
@@ -68,15 +82,19 @@ export default class User extends Component {
     // 1. 收集输入数据
     const user = this.form.getFieldsValue()
     this.form.resetFields()
+    // 如果是更新, 需要给user指定_id属性
+    if (this.user) {
+      user._id = this.user._id
+    }
 
     // 2. 提交添加的请求
-    const result = await reqAddUser(user)
+    const result = await reqAddOrUpdateUser(user)
     // 3. 更新列表显示
     if (result.status === 0) {
-      message.success('添加用户成功！')
+      message.success(`${this.user ? '修改' : '添加'}用户成功！`)
       this.getUsers()
     } else {
-      message.error('添加用户失败！')
+      message.error(`${this.user ? '修改' : '添加'}用户失败！`)
     }
   }
 
@@ -121,7 +139,8 @@ export default class User extends Component {
   render () {
 
     const { users, isShow, roles  } = this.state
-    const title = <Button type="primary" onClick={() => this.setState({ isShow: true})}>创建用户</Button>
+    const user = this.user || {}
+    const title = <Button type="primary" onClick={() => this.showAdd()}>创建用户</Button>
 
     return (
       <Card title={title}>
@@ -134,12 +153,15 @@ export default class User extends Component {
         ></Table>
 
         <Modal
-          title="添加用户"
+          title={user._id ? '修改用户' : '添加用户'}
           visible={isShow}
           onOk={this.addUpdateUser}
-          onCancel={() => this.setState({ isShow: false})}
+          onCancel={() => {
+            this.form.resetFields()
+            this.setState({ isShow: false})
+          }}
         >
-          <UserForm setForm={form => this.form = form} roles={roles}></UserForm>
+          <UserForm setForm={form => this.form = form} roles={roles} user={user}></UserForm>
         </Modal>
       </Card>
     )

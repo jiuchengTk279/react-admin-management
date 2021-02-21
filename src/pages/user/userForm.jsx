@@ -21,6 +21,7 @@ class UserForm extends PureComponent {
   render () {
 
     const { roles, user } = this.props
+    // const user = this.props.user || {}
     const { getFieldDecorator } = this.props.form
     // 指定Item布局的配置对象
     const formItemLayout = {
@@ -43,18 +44,23 @@ class UserForm extends PureComponent {
             )
           }
         </Item>
-        <Item label="密码">
-          {
-            getFieldDecorator('password', {
-              initialValue: user.password,
-              rules: [
-                { required: true, message: '密码必须输入'}
-              ]
-            })(
-              <Input type="password" placeholder="请输入密码"></Input>
-            )
-          }
-        </Item>
+        {
+          user._id ? null : (
+            <Item label="密码">
+              {
+                getFieldDecorator('password', {
+                  initialValue: user.password,
+                  rules: [
+                    { required: true, message: '密码必须输入'}
+                  ]
+                })(
+                  <Input type="password" placeholder="请输入密码"></Input>
+                )
+              }
+            </Item>
+          )
+        }
+        
         <Item label="手机号">
           {
             getFieldDecorator('phone', {
