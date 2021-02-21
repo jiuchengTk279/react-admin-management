@@ -6,6 +6,7 @@ import AddForm from './addForm'
 import AuthForm from './authForm'
 import { formateDate } from '../../utils/dateUtils'
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 
 export default class Role extends Component {
 
@@ -107,9 +108,19 @@ export default class Role extends Component {
     const result = await reqUpdateRole(role)
     if (result.status === 0) {
       message.success('设置角色权限成功')
-      this.setState({
-        roles: [...this.state.roles]
-      })
+      // 如果当前更新的是自己角色的权限, 强制退出
+      if (role._id === memoryUtils.user.role_id) {
+        memoryUtils.user = {}
+        storageUtils.removeUser()
+        this.props.history.replace('/login')
+        message.success('当前用户角色权限修改了，请重新登录')
+      } else {
+        message.success('设置角色权限成功！')
+        this.setState({
+          roles: [...this.state.roles]
+        })
+      }
+
     }
   }
 
