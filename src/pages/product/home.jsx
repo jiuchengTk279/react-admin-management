@@ -3,6 +3,7 @@ import { Card, Select, Input, Button, Icon, Table, message } from 'antd'
 import LinkButton from '../../components/linkButton'
 import { reqProducts, reqSearchProducts, reqUpdateStatus } from '../../api'
 import { PAGE_SIZE } from '../../utils/constants'
+import memoryUtils from '../../utils/memoryUtils'
 
 const Option = Select.Option
 export default class ProductHome extends Component {
@@ -54,15 +55,28 @@ export default class ProductHome extends Component {
           return (
             <span>
               {/*将product对象使用state传递给目标路由组件*/}
-              <LinkButton onClick={() => this.props.history.push('/product/detail', {product})}>详情</LinkButton>
-              <LinkButton onClick={() => this.props.history.push('/product/detail', product)}>修改</LinkButton>
+              <LinkButton onClick={() => this.showDetail(product)}>详情</LinkButton>
+              <LinkButton onClick={() => this.showUpdate(product)}>修改</LinkButton>
             </span>
           )
         }
       }
     ]
   } 
+
+  // 显示商品详情界面
+  showDetail = (product) => {
+    // 缓存 product 对象，给 detail 组件使用
+    memoryUtils.product = product
+    this.props.history.replace('/product/detail')
+  }
   
+  // 显示修改商品界面
+  showUpdate = (product) => {
+    memoryUtils.product = product
+    this.props.history.replace('/product/addupdate')
+  }
+
   // 获取指定页码的列表数据显示
   getProducts = async (pageNum) => {
     // 保存pageNum, 让其它方法可以看到
