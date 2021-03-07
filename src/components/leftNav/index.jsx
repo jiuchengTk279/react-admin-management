@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import { Menu, Icon } from 'antd'
+import { connect } from 'react-redux'
 import logo from '../../assets/images/logo.png'
 import menuList from '../../config/menuConfig'
 import memoryUtils from '../../utils/memoryUtils'
+import { setHeadTitle } from '../../redux/actions'
+
 import './index.less'
 
 const { SubMenu } = Menu
@@ -13,8 +16,10 @@ class LeftNav extends Component {
   hasAuth = (item) => {
     const { key, isPublic } = item 
     
-    const menus = memoryUtils.user.role.menus
-    const username = memoryUtils.user.username
+    // const menus = memoryUtils.user.role.menus
+    // const username = memoryUtils.user.username
+    const menus = this.props.user.role.menus
+    const username = this.props.user.username
     /**
      * 1. 如果当前用户是admin
      * 2. 如果当前item是公开的
@@ -69,10 +74,16 @@ class LeftNav extends Component {
       // 如果当前用户有item对应的权限, 才需要显示对应的菜单项
       if (this.hasAuth(item)) {
         if (!item.children) {
+          // 判断 item 是否是当前对应的 item
+          if (item.key === path || path.indexOf(item.key)===0) {
+            // 更新 redux 中的 headerTitle 状态
+            this.props.setHeadTitle(item.title)
+          }
+
           // 向pre添加<Menu.Item>
           pre.push((
             <Menu.Item key={item.key}>
-              <Link to={item.key}>
+              <Link to={item.key} onClick={() => this.props.setHeadTitle(item.title)}>
                 <Icon type={item.icon}></Icon>
                 <span>{item.title}</span>
               </Link>
@@ -145,4 +156,8 @@ withRouter高阶组件:
 包装非路由组件, 返回一个新的组件
 新的组件向非路由组件传递3个属性: history/location/match
  */
-export default withRouter(LeftNav)
+// export default withRouter(LeftNav)
+export default connect(
+  state => ({user: state.user}),
+  { setHeadTitle }
+)(withRouter(LeftNav))

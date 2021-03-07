@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 import { Modal, message } from 'antd'
 import { formateDate } from '../../utils/dateUtils'
 import memoryUtils from '../../utils/memoryUtils'
@@ -7,6 +8,7 @@ import storageUtils from '../../utils/storageUtils'
 import menuList from '../../config/menuConfig'
 import LinkButton from '../linkButton'
 import { reqWeather } from '../../api'
+import { logout } from '../../redux/actions'
 import './index.less'
 
 const { confirm } = Modal
@@ -51,11 +53,14 @@ class Header extends Component {
       // title: '警告提示',
       content: '确定退出吗？',
       onOk: () => {
-        // 删除保存的 user 数据
-        storageUtils.removeUser()
-        memoryUtils.user = {}
-        // 跳转到 login
-        this.props.history.replace('/login')
+        // // 删除保存的 user 数据
+        // storageUtils.removeUser()
+        // memoryUtils.user = {}
+        // // 跳转到 login
+        // this.props.history.replace('/login')
+        // message.success('退出成功')
+
+        this.props.logout()
         message.success('退出成功')
       },
       onCancel() {
@@ -81,8 +86,10 @@ class Header extends Component {
 
   render () {
     const { currentTime, dayPictureUrl, weather } = this.state
-    const username = memoryUtils.user.username
-    const title = this.getTitle()
+    // const username = memoryUtils.user.username
+    const username = this.props.user.username
+    // const title = this.getTitle()
+    const title = this.props.headTitle
 
     return (
       <div className="header">
@@ -103,4 +110,8 @@ class Header extends Component {
   }
 }
 
-export default withRouter(Header)
+// export default withRouter(Header)
+export default connect(
+  state => ({ headTitle: state.headTitle, user: state.user }),
+  {logout}
+)(withRouter(Header))
